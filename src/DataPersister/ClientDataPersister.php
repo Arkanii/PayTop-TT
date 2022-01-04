@@ -38,7 +38,7 @@ final class ClientDataPersister implements ContextAwareDataPersisterInterface
     }
 
     /**
-     * @param $data
+     * @param Client $data
      * @param array $context
      * @return void
      */
