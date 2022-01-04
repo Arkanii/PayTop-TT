@@ -4,31 +4,48 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ClientRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
+
+/* Step 2 can be resolved with "Lifecycle Callbacks" too */
+# https://symfony.com/doc/current/doctrine/events.html#doctrine-lifecycle-callbacks
+# #[ORM\HasLifecycleCallbacks]
+
 #[ApiResource(
     collectionOperations: ['get', 'post'],
     itemOperations: ['get'],
+    denormalizationContext: ['groups' => ['post']],
+    normalizationContext: ['groups' => ['get']]
 )]
 class Client
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $firstName;
+    #[Groups(['get', 'post'])]
+    private string $firstName;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $lastName;
+    #[Groups(['get', 'post'])]
+    private string $lastName;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $email;
+    #[Groups(['get', 'post'])]
+    private string $email;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $phone;
+    #[Groups(['get', 'post'])]
+    private string $phone;
+
+    #[ORM\Column(type: 'datetime_immutable')]
+    #[Groups(['get'])]
+    private DateTimeImmutable $created;
 
     public function getId(): ?int
     {
@@ -79,6 +96,19 @@ class Client
     public function setPhone(string $phone): self
     {
         $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getCreated(): ?DateTimeImmutable
+    {
+        return $this->created;
+    }
+
+    // #[ORM\PrePersist]
+    public function setCreated(): self
+    {
+        $this->created = new DateTimeImmutable();
 
         return $this;
     }
