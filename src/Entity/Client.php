@@ -14,6 +14,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 # https://symfony.com/doc/current/doctrine/events.html#doctrine-lifecycle-callbacks
 # #[ORM\HasLifecycleCallbacks]
 
+// https://api-platform.com/docs/core/operations/#enabling-and-disabling-operations
+// https://api-platform.com/docs/core/serialization/#using-serialization-groups-per-operation
 #[ApiResource(
     collectionOperations: ['get', 'post'],
     itemOperations: ['get'],
