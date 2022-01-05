@@ -5,10 +5,11 @@
 namespace App\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use ApiPlatform\Core\DataPersister\ResumableDataPersisterInterface;
 use App\Entity\Client;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class ClientDataPersister implements ContextAwareDataPersisterInterface
+final class ClientDataPersister implements ContextAwareDataPersisterInterface, ResumableDataPersisterInterface
 {
     private EntityManagerInterface $entityManager;
 
@@ -25,9 +26,9 @@ final class ClientDataPersister implements ContextAwareDataPersisterInterface
     /**
      * @param Client $data
      * @param array $context
-     * @return void
+     * @return Client
      */
-    public function persist($data, array $context = []): void
+    public function persist($data, array $context = []): Client
     {
         if (!$data->getId()) {
             $data->setCreated();
@@ -35,6 +36,8 @@ final class ClientDataPersister implements ContextAwareDataPersisterInterface
 
         $this->entityManager->persist($data);
         $this->entityManager->flush();
+
+        return $data;
     }
 
     /**
@@ -46,5 +49,10 @@ final class ClientDataPersister implements ContextAwareDataPersisterInterface
     {
         $this->entityManager->remove($data);
         $this->entityManager->flush();
+    }
+
+    public function resumable(array $context = []): bool
+    {
+        return true;
     }
 }

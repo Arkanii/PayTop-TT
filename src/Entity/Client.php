@@ -8,20 +8,23 @@ use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: ClientRepository::class)]
-
 /* Step 2 can be resolved with "Lifecycle Callbacks" too */
 # https://symfony.com/doc/current/doctrine/events.html#doctrine-lifecycle-callbacks
 # #[ORM\HasLifecycleCallbacks]
 
 // https://api-platform.com/docs/core/operations/#enabling-and-disabling-operations
 // https://api-platform.com/docs/core/serialization/#using-serialization-groups-per-operation
+// https://api-platform.com/docs/core/messenger/#dispatching-a-resource-through-the-message-bus
 #[ApiResource(
-    collectionOperations: ['get', 'post'],
+    collectionOperations: [
+        'get',
+        'post' => ["messenger" => true]
+    ],
     itemOperations: ['get'],
     denormalizationContext: ['groups' => ['post']],
     normalizationContext: ['groups' => ['get']]
 )]
+#[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client
 {
     #[ORM\Id]
