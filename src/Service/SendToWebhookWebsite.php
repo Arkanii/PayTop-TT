@@ -10,15 +10,12 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 final class SendToWebhookWebsite
 {
-    private HttpClientInterface $client;
-    private ParameterBagInterface $params;
-    private SerializerInterface $serializer;
-
-    public function __construct(ParameterBagInterface $params, HttpClientInterface $client, SerializerInterface $serializer)
+    public function __construct(
+        private ParameterBagInterface $params,
+        private HttpClientInterface   $client,
+        private SerializerInterface   $serializer
+    )
     {
-        $this->params = $params;
-        $this->client = $client;
-        $this->serializer = $serializer;
     }
 
     /**

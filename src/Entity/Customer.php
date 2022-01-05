@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\ClientRepository;
+use App\Repository\CustomerRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -17,15 +17,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
 // https://api-platform.com/docs/core/messenger/#dispatching-a-resource-through-the-message-bus
 #[ApiResource(
     collectionOperations: [
-        'get',
+        'get' => ["security" => "is_granted('IS_AUTHENTICATED_FULLY')"],
         'post' => ["messenger" => true]
     ],
-    itemOperations: ['get'],
+    itemOperations: ['get' => ["security" => "is_granted('IS_AUTHENTICATED_FULLY') and object.getPartner() == user"]],
     denormalizationContext: ['groups' => ['post']],
     normalizationContext: ['groups' => ['get']]
 )]
-#[ORM\Entity(repositoryClass: ClientRepository::class)]
-class Client
+#[ORM\Entity(repositoryClass: CustomerRepository::class)]
+class Customer
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -51,6 +51,10 @@ class Client
     #[ORM\Column(type: 'datetime_immutable')]
     #[Groups(['get'])]
     private DateTimeImmutable $created;
+
+    #[ORM\ManyToOne(targetEntity: Partner::class, inversedBy: 'customers')]
+    #[ORM\JoinColumn(nullable: false)]
+    private Partner $partner;
 
     public function getId(): ?int
     {
@@ -114,6 +118,18 @@ class Client
     public function setCreated(): self
     {
         $this->created = new DateTimeImmutable();
+
+        return $this;
+    }
+
+    public function getPartner(): ?Partner
+    {
+        return $this->partner;
+    }
+
+    public function setPartner(?Partner $partner): self
+    {
+        $this->partner = $partner;
 
         return $this;
     }

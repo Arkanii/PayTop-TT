@@ -6,32 +6,40 @@ namespace App\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use ApiPlatform\Core\DataPersister\ResumableDataPersisterInterface;
-use App\Entity\Client;
+use App\Entity\Customer;
+use App\Entity\Partner;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Security;
 
-final class ClientDataPersister implements ContextAwareDataPersisterInterface, ResumableDataPersisterInterface
+final class CustomerDataPersister implements ContextAwareDataPersisterInterface, ResumableDataPersisterInterface
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private Security               $security
+    )
     {
-        $this->entityManager = $entityManager;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Client;
+        return $data instanceof Customer;
     }
 
     /**
-     * @param Client $data
+     * @param Customer $data
      * @param array $context
-     * @return Client
+     * @return Customer
      */
-    public function persist($data, array $context = []): Client
+    public function persist($data, array $context = []): Customer
     {
+        $user = $this->security->getUser();
+
         if (!$data->getId()) {
             $data->setCreated();
+
+            if ($user instanceof Partner) {
+                $data->setPartner($user);
+            }
         }
 
         $this->entityManager->persist($data);
@@ -41,7 +49,7 @@ final class ClientDataPersister implements ContextAwareDataPersisterInterface, R
     }
 
     /**
-     * @param Client $data
+     * @param Customer $data
      * @param array $context
      * @return void
      */
