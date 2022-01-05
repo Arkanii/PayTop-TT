@@ -21,11 +21,22 @@ install: composer.lock ## Install vendors according to the current composer.lock
 
 ## —— Symfony 🎵️ —————————————————————————————————————————————————————
 
-consume: ## Consume all RabbitMQ messages
-	@$(SYMFONY) console messenger:consume -vv
+serve: ## Start server
+	@$(SYMFONY) serve -d
+
+server-stop: ## Stop server
+	@$(SYMFONY) server:stop
 
 migrate: ## Update datatable structure
 	@$(SYMFONY) console doctrine:migrations:migrate --no-interaction
+
+## —— RabbitMQ 🐇️ —————————————————————————————————————————————————————
+
+consume: ## Consume all messages
+	@$(SYMFONY) console messenger:consume -vv
+
+open-rabbitmq-admin: ## Open admin website
+	@$(SYMFONY) open:local:rabbitmq
 
 ## ——————————————————————————————— OTHER ——————————————————————————————
 
@@ -53,16 +64,13 @@ logs: ## Show live logs
 
 init: install up migrate down  ## Initialize project, need to run after git clone
 
-start: up serve open-browser ## Start Docker
+start: up serve open-browser open-webhook-site open-rabbitmq-admin ## Start Docker
 
 stop: server-stop down ## Stop Docker
-
-serve: ## Start Symfony server
-	@$(SYMFONY) serve -d
-
-server-stop: ## Stop Symfony server
-	@$(SYMFONY) server:stop
 
 open-browser: ## Open website into browser
 	@sleep 3
 	@xdg-open 'https://127.0.0.1:8000'
+
+open-webhook-site:
+	@xdg-open 'https://webhook.site/#!/1e943e77-c1db-4ae7-8969-2fc51e5eee5c'
