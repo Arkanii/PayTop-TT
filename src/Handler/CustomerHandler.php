@@ -1,5 +1,7 @@
 <?php
 
+// https://api-platform.com/docs/core/messenger/#registering-a-message-handler
+
 namespace App\Handler;
 
 use App\Entity\Customer;

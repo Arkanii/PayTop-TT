@@ -6,6 +6,7 @@ kernel:
     resource: ../src/Kernel.php
     type: annotation
 
+# https://api-platform.com/docs/core/jwt/#configuring-the-symfony-securitybundle
 authentication_token:
     path: /authentication_token
     methods: ['POST']

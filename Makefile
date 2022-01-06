@@ -78,5 +78,5 @@ open-browser: ## Open website into browser
 	@sleep 3
 	@xdg-open 'https://127.0.0.1:8000/docs'
 
-open-webhook-site:
+open-webhook-site: ## Open webhook.site into browser
 	@xdg-open 'https://webhook.site/#!/1e943e77-c1db-4ae7-8969-2fc51e5eee5c'

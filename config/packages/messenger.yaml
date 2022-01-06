@@ -11,4 +11,5 @@ framework:
 
         routing:
         # Route your messages to the transports
+            # https://symfony.com/doc/current/messenger.html#routing-messages-to-a-transport
             'App\Entity\Customer': async
