@@ -7,7 +7,7 @@
 ## Requirements
 
 - Docker and docker-compose
-- PHP 8 
+- PHP 8 (with AMQP extension)
 - [Symfony CLI](https://symfony.com/download)
 - Composer
 
@@ -25,7 +25,7 @@ After initialization, you just need to run :
 $ make start
 ```
 
-And all is started for you ! :tada:
+And all is started and opened for you ! :tada:
 
 ## How to open ... ?
 
