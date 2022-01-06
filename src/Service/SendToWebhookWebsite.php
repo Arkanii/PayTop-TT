@@ -35,7 +35,7 @@ final class SendToWebhookWebsite
                 'body' => $this->serializer->serialize(
                     $entity,
                     'json',
-                    ['groups' => 'post']
+                    ['groups' => 'write:customer']
                 )
             ]
         );

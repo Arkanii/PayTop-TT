@@ -1,5 +1,7 @@
 <?php
 
+// https://api-platform.com/docs/core/extensions/#example
+
 namespace App\Doctrine;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
@@ -27,7 +29,7 @@ final class CurrentUserExtension implements QueryCollectionExtensionInterface
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass): void
     {
         if (Customer::class !== $resourceClass ||
-//            $this->security->isGranted('ROLE_ADMIN') ||
+            $this->security->isGranted('ROLE_ADMIN') ||
             null === $user = $this->security->getUser()) {
             return;
         }

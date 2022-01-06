@@ -17,12 +17,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
 // https://api-platform.com/docs/core/messenger/#dispatching-a-resource-through-the-message-bus
 #[ApiResource(
     collectionOperations: [
-        'get' => ["security" => "is_granted('IS_AUTHENTICATED_FULLY')"],
-        'post' => ["messenger" => true]
+        'get' => ["security" => "is_granted('ROLE_PARTNER')"],
+        'post' => [
+            "messenger" => true,
+            "security_post_denormalize" => "is_granted('CUSTOMER_CREATE', object)"
+        ]
     ],
-    itemOperations: ['get' => ["security" => "is_granted('IS_AUTHENTICATED_FULLY') and object.getPartner() == user"]],
-    denormalizationContext: ['groups' => ['post']],
-    normalizationContext: ['groups' => ['get']]
+    itemOperations: [
+        'get' => [
+            "normalization_context" => ["groups" => ["read:customer:item"]],
+            "security" => "is_granted('ROLE_PARTNER') and (object.getPartner() == user or is_granted('ROLE_ADMIN'))"
+        ]
+    ],
+    denormalizationContext: ["groups" => ["write:customer"]],
+    normalizationContext: ["groups" => ["read:customer:collection", "read:customer:item"]]
 )]
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
 class Customer
@@ -33,23 +41,23 @@ class Customer
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['get', 'post'])]
+    #[Groups(['write:customer', 'read:customer:item', 'read:customer:collection'])]
     private string $firstName;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['get', 'post'])]
+    #[Groups(['write:customer', 'read:customer:item', 'read:customer:collection'])]
     private string $lastName;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['get', 'post'])]
+    #[Groups(['write:customer', 'read:customer:item', 'read:customer:collection'])]
     private string $email;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['get', 'post'])]
+    #[Groups(['write:customer', 'read:customer:item', 'read:customer:collection'])]
     private string $phone;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    #[Groups(['get'])]
+    #[Groups(['read:customer:collection', 'read:customer:item:admin'])]
     private DateTimeImmutable $created;
 
     #[ORM\ManyToOne(targetEntity: Partner::class, inversedBy: 'customers')]

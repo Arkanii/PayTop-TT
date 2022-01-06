@@ -10,6 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: PartnerRepository::class)]
 class Partner extends User
 {
+    #[ORM\Column(type: 'json')]
+    protected $roles = ['ROLE_PARTNER'];
+
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Customer::class)]
     private $customers;
 
