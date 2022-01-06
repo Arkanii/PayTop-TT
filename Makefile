@@ -30,6 +30,11 @@ server-stop: ## Stop server
 migrate: ## Update datatable structure
 	@$(SYMFONY) console doctrine:migrations:migrate --no-interaction
 
+reset-datatable: ## Delete and recreate datatable
+	@$(SYMFONY) console doctrine:database:drop --force
+	@$(SYMFONY) console doctrine:database:create
+	@$(SYMFONY) console doctrine:migrations:migrate --no-interaction
+
 fixtures: ## Start fixtures
 	@$(SYMFONY) console doctrine:fixtures:load --no-interaction
 
@@ -68,7 +73,11 @@ logs: ## Show live logs
 
 ## —— Project 🐝 ——————————————————————————————————————————————————————
 
-init: install up migrate fixtures keypair down  ## Initialize project, need to run after git clone
+init: install up serve reset-datatable fixtures keypair server-stop down  ## Initialize project, need to run after git clone
+	@echo "\n🎉 Done ! 🎉\n"
+	@echo "Execute \"make start\" for launch all the environnement ! 🐳\n"
+	@echo "Execute \"make stop\" when you are done in order to close the environment.\n"
+	@echo "And \"make help\" for list all available commands."
 
 start: up serve open-browser open-webhook-site open-rabbitmq-admin ## Start Docker
 
