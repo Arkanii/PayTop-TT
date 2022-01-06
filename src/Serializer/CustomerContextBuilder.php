@@ -25,11 +25,15 @@ final class CustomerContextBuilder implements SerializerContextBuilderInterface
 
         if (
             $resourceClass === Customer::class &&
-            isset($context['groups']) &&
             true === $normalization &&
+            isset($context['groups']) &&
             $this->authorizationChecker->isGranted('ROLE_ADMIN')
         ) {
-            $context['groups'][] = 'read:customer:item:admin';
+            if (in_array('read:customer:item', $context['groups'], true)){
+                $context['groups'][] = 'read:customer:item:admin';
+            } elseif (in_array('read:customer:collection', $context['groups'], true)){
+                $context['groups'][] = 'read:customer:collection:admin';
+            }
         }
 
         return $context;

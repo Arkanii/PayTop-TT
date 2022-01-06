@@ -17,7 +17,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 // https://api-platform.com/docs/core/messenger/#dispatching-a-resource-through-the-message-bus
 #[ApiResource(
     collectionOperations: [
-        'get' => ["security" => "is_granted('ROLE_PARTNER')"],
+        'get' => [
+            "security" => "is_granted('ROLE_PARTNER')",
+            "normalization_context" => ["groups" => ["read:customer:collection"]],
+        ],
         'post' => [
             "messenger" => true,
             "security_post_denormalize" => "is_granted('CUSTOMER_CREATE', object)"
@@ -57,11 +60,12 @@ class Customer
     private string $phone;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    #[Groups(['read:customer:collection', 'read:customer:item:admin'])]
+    #[Groups(['read:customer:item:admin'])]
     private DateTimeImmutable $created;
 
     #[ORM\ManyToOne(targetEntity: Partner::class, inversedBy: 'customers')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['read:customer:item:admin', 'read:customer:collection:admin'])]
     private Partner $partner;
 
     public function getId(): ?int
